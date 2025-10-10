@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccessController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,9 +18,14 @@ use Illuminate\Support\Facades\Route;
 
 
 // ユーザー側
-    Route::get('/', function () {
-        return view('user.top');
-    });
+Route::get('/', function () {
+    return view('user.top');
+});
+Route::get('/top', function () {
+    return redirect('/');
+})->name('user.top');
+
+Route::get('/access', [AccessController::class, 'access'])->name('user.access');
 
 
 
