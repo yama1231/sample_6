@@ -1,0 +1,28 @@
+name: Laravel CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  laravel-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+
+    - name: Install Dependencies
+      run: composer install --prefer-dist --no-progress
+
+    - name: Run Larastan
+      run: ./vendor/bin/phpstan analyse
+
+    - name: Run PHP CS Fixer
+      run: ./vendor/bin/php-cs-fixer fix --dry-run --diff
