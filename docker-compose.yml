@@ -18,5 +18,11 @@ services:
     volumes:
       - db-store:/var/lib/mysql
 
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - 8025:8025  # Web UI
+      - 1025:1025  # SMTP
+
 volumes:
   db-store:
