@@ -20,7 +20,7 @@
                     <x-nav-link :href="route('user.access')">
                         {{ __('アクセス') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('user.access')">
+                    <x-nav-link :href="route('user.contact.index')">
                         {{ __('お問い合わせ') }}
                     </x-nav-link>
                 </div>

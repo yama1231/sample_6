@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccessController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,14 +19,20 @@ use Illuminate\Support\Facades\Route;
 
 
 // ユーザー側
+
+// ホーム画面
 Route::get('/', function () {
     return view('user.top');
 });
 Route::get('/top', function () {
     return redirect('/');
 })->name('user.top');
-
+// アクセス
 Route::get('/access', [AccessController::class, 'access'])->name('user.access');
+// お問い合わせ
+Route::get('/contact/index', [ContactController::class, 'index'])->name('user.contact.index');
+Route::post('/contact/confirm', [ContactController::class, 'confirm'])->name('user.contact.confirm');
+Route::post('/contact/complete', [ContactController::class, 'complete'])->name('user.contact.complete');
 
 
 
@@ -34,6 +41,7 @@ Route::get('/access', [AccessController::class, 'access'])->name('user.access');
 
 
 // 管理者側
+
 Route::prefix('admin')->group(function () {
 
 
