@@ -40,6 +40,7 @@ Route::post('/contact/complete', [ContactController::class, 'complete'])->name('
 
 
 
+
 // 管理者側
 
 Route::prefix('admin')->group(function () {

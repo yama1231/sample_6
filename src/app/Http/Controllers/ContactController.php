@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ContactMail;
+use Illuminate\Support\Facades\Mail; 
 use App\Models\Contact;
 use Illuminate\Http\Request;
 
@@ -63,6 +65,14 @@ class ContactController extends Controller
             'title' => session('title'),
             'detail' => session('detail'),
         ]);
+
+        $session_data = session()->only(['name','email','title','detail']);
+        $input = $request->all();
+        // ユーザへ送信　
+        Mail::to($session_data['email'])->send(new ContactMail('user.contact.mail', 'お問い合わせが完了しました', $session_data));
+        // 管理者へ送信
+        Mail::to('admin@example.com')->send(new ContactMail('user.contact.admin_mail', 'お問い合わせを受信しました', $session_data));
+        
         return view('user.contact.complete');
     }
 
