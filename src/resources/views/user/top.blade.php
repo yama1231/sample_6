@@ -1,10 +1,10 @@
-<x-user-layout>
+{{-- <x-user-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{-- {{ __('Profile') }} --}}
+            {{ __('Profile') }}
             宿泊サイト
         </h2>
-    </x-slot>
+    </x-slot> --}}
 
     {{-- <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
@@ -29,8 +29,20 @@
     </div> --}}
     
 
+    {{-- <p>TOPペーじ</p>
+</x-user-layout> --}}
+{{-- 一時的に設置。ダッシュボード改修中 --}}
+    {{-- <form method="POST" action="{{ route('logout') }}" id="logout-form">
+        @csrf
+        <button type="submit">
+            Logout
+        </button>
+    </form>  --}}
+
+@extends('layouts.user-navigation')
+@section('content')
     <p>TOPペーじ</p>
-</x-user-layout>
+@endsection
 
 
 
