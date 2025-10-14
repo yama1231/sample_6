@@ -26,4 +26,7 @@
             </div>
         </div>
     </div>
+    <a href="{{ route('dashboard') }}" class="hidden space-x-8 sm:-my-px sm:flex sm:items-center font-medium text-xl text-gray-900 hover:text-gray-700 transition">
+        ダッシュボードへ戻る
+    </a>
 </x-app-layout>
