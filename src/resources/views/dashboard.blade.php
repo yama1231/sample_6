@@ -113,6 +113,9 @@
         <a href="{{ route('profile.edit') }}" class="btn btn-primary">
             Profile
         </a>
+        <a href="{{ route('reservation_slots.index') }}" class="btn btn-primary">
+            予約枠
+        </a>
     {{-- </form> --}}
     <br>
     <form action="{{ route('logout') }}" method="POST" id="logout-form">

@@ -4,6 +4,7 @@ use App\Http\Controllers\AccessController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReservationSlotController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -43,32 +44,40 @@ Route::post('/contact/complete', [ContactController::class, 'complete'])->name('
 
 
 // 管理者側
-
 Route::prefix('admin')->group(function () {
-
-
     Route::get('/', function () {
         return view('welcome');
     });
-
     //管理者側　ログイン後画面（後で最初にログイン画面が来るように修正する）
-
     // Route::get('/dashboard', function () {
     //     return view('dashboard');
     // })->middleware(['auth', 'verified'])->name('dashboard');
 
-    Route::middleware('auth')->group(function () {
+    // ダッシュボード
+    Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
-        Route::get('/dashboard/detail', [HomeController::class, 'dashboard_detail'])->name('dashboard_detail');
-        Route::post('/dashboard/detail', [HomeController::class, 'dashboard_detail'])->name('dashboard_detail');
-        Route::post('/dashboard/edit', [HomeController::class, 'dashboard_edit'])->name('dashboard_edit');
-    })->middleware(['auth', 'verified']);
+    });
 
     Route::middleware('auth')->group(function () {
+        // プロフィール
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+        // お問い合わせ
+        Route::get('/dashboard/detail', [HomeController::class, 'dashboard_detail'])->name('dashboard_detail');
+        Route::post('/dashboard/detail', [HomeController::class, 'dashboard_detail'])->name('dashboard_detail');
+        Route::post('/dashboard/edit', [HomeController::class, 'dashboard_edit'])->name('dashboard_edit');
+        // 予約枠
+        Route::resource('/reservation_slots', ReservationSlotController::class);
+
+        /////以下のチャプター１０以降のルーティングは、resource()の第一引数（URL）は、複数形でケバブケースにする
+
+
+
+
+
     });
+    // 
 
 
 });
