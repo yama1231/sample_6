@@ -9,16 +9,16 @@ class ReservationSlot extends Model
 {
     use HasFactory;
 
-    //  これで不都合ないか、挙動を見てから判断
     protected $fillable = [
         'reservation_date',
         'room_type_id',
-        'available_rooms'
+        'available_rooms',
     ];
     //  10/15 チャプター９の時点では使用しないが、チャプター１３の予約時にフォーマット変換しそうなので定義しておく
-    protected $casts = [
-        'reservation_date' => 'date',
-    ];
+    //  10/18 そのまま画面に持っていくと時刻まで表示されるので、一旦非表示
+    // protected $casts = [
+    //     'reservation_date' => 'date',
+    // ];
 
     public function roomType()
     {

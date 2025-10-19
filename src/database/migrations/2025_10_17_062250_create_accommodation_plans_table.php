@@ -13,15 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('reservation_slots', function (Blueprint $table) {
+        Schema::create('accommodation_plans', function (Blueprint $table) {
             $table->id();
-            $table->date('reservation_date');
-            $table->integer('available_rooms');
-            $table->foreignId('room_type_id')->constrained('room_types');
+            $table->string('title');
+            $table->integer('price');
+            $table->text('description');
+            $table->foreignId('reservation_slot_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
-            $table->unique(['reservation_date', 'room_type_id']);
         });
-        
     }
 
     /**
@@ -31,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('reservation_slots');
+        Schema::dropIfExists('accommodation_plans');
     }
 };

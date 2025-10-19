@@ -18,8 +18,7 @@
                     <th>氏名</th>
                     <th>お問合せ日</th>
                     <th>対応状況</th>
-                    <th>ステータス変更</th>
-                    <th>詳細</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -110,11 +109,15 @@
             Profile
         </button> --}}
 
+        <p>※お問合せ詳細のデザインがおかしいので、要修正＋日付フォーマット変換※</p>
         <a href="{{ route('profile.edit') }}" class="btn btn-primary">
             Profile
         </a>
         <a href="{{ route('reservation_slots.index') }}" class="btn btn-primary">
             予約枠
+        </a>
+        <a href="{{ route('accommodation-plans.index') }}" class="btn btn-primary">
+            宿泊プラン
         </a>
     {{-- </form> --}}
     <br>

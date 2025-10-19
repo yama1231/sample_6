@@ -13,7 +13,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $contact_list = Contact::paginate(5);
+        $contact_list = Contact::orderBy('created_at','desc')->paginate(5);
         return view('dashboard',compact('contact_list'));
     }
 

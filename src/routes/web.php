@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\AccessController;
+use App\Http\Controllers\AccommodationPlanController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReservationSlotController;
+use App\Models\AccommodationPlan;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,11 +37,11 @@ Route::get('/access', [AccessController::class, 'access'])->name('user.access');
 Route::get('/contact/index', [ContactController::class, 'index'])->name('user.contact.index');
 Route::post('/contact/confirm', [ContactController::class, 'confirm'])->name('user.contact.confirm');
 Route::post('/contact/complete', [ContactController::class, 'complete'])->name('user.contact.complete');
-
-
-
-
-
+//宿泊プラン index search show
+Route::resource('/accommodation-plans', AccommodationPlanController::class);
+Route::get('/accommodation-plans/top', [ContactController::class, 'top'])->name('user.plan.top');
+Route::get('/accommodation-plans/search', [ContactController::class, 'search'])->name('user.accommodation-plans.search');
+Route::get('/accommodation-plans/detail', [ContactController::class, 'detail'])->name('user.accommodation-plans.detail');
 
 
 
@@ -63,22 +65,12 @@ Route::prefix('admin')->group(function () {
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-        // お問い合わせ
+        // お問い合わせ　　　🌟dashboard.detailなど統一する🌟
         Route::get('/dashboard/detail', [HomeController::class, 'dashboard_detail'])->name('dashboard_detail');
         Route::post('/dashboard/detail', [HomeController::class, 'dashboard_detail'])->name('dashboard_detail');
         Route::post('/dashboard/edit', [HomeController::class, 'dashboard_edit'])->name('dashboard_edit');
         // 予約枠
         Route::resource('/reservation_slots', ReservationSlotController::class);
-
-        /////以下のチャプター１０以降のルーティングは、resource()の第一引数（URL）は、複数形でケバブケースにする
-
-
-
-
-
     });
-    // 
-
-
 });
 require __DIR__.'/auth.php';

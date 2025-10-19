@@ -28,6 +28,8 @@
                     <th>No.</th>
                     <th>件名</th>
                     <th>氏名</th>
+                    <th>メールアドレス</th>
+                    <th>内容</th>
                     <th>お問合せ日</th>
                     <th>対応状況</th>
                     <th>ステータス変更</th>
@@ -39,6 +41,8 @@
                     <td>{{ $contact->id }}</td>
                     <td>{{ $contact->title }}</td>
                     <td>{{ $contact->name }}</td>
+                    <td>{{ $contact->email }}</td>
+                    <td>{{ $contact->detail }}</td>
                     <td>{{ $contact->created_at }}</td>
                     @if ($contact->status == 0)
                         <td>未対応</td>
@@ -94,6 +98,8 @@
                 </div>
             </tbody>
         </table>
+        <p>たて箇条書き、ステータス記載、ボタンを下に設置、ステータス変更後に詳細画面に再遷移</p>
+        <p>ステータス変更後にセッションメッセージを表示</p>
         <a href="{{ route('dashboard') }}" class="hidden space-x-8 sm:-my-px sm:flex sm:items-center font-medium text-xl text-gray-900 hover:text-gray-700 transition">
             ダッシュボードへ戻る
         </a>

@@ -18,7 +18,7 @@ class ReservationSlotController extends Controller
     public function index()
     {
         $reservationSlots = ReservationSlot::with('roomType')
-        ->orderBy('reservation_date','desc')
+        ->orderBy('reservation_date','asc')
         ->orderBy('room_type_id')
         ->paginate(15);
 

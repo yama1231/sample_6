@@ -22,8 +22,7 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>予約日</th>
+                            <th>対象日</th>
                             <th>部屋タイプ</th>
                             <th>利用可能数</th>
                             <th>操作</th>
@@ -32,7 +31,6 @@
                     <tbody>
                         @forelse ($reservationSlots as $slot)
                             <tr>
-                                <td>{{ $slot->id }}</td>
                                 <td>{{ $slot->reservation_date->format('Y年m月d日') }}</td>
                                 <td>{{ $slot->roomType->name }}</td>
                                 <td>{{ $slot->available_rooms }}</td>
