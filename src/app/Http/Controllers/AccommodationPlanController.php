@@ -17,7 +17,6 @@ class AccommodationPlanController extends Controller
      */
     public function index()
     {  
-        // withに入るのは、リレーションメソッド（モデルに記載）
         $plans = AccommodationPlan::with('images')->paginate('10');
         return view('admin.accommodation_plan.index', compact('plans'));
     }
@@ -31,23 +30,7 @@ class AccommodationPlanController extends Controller
     {
         $reservationSlots = ReservationSlot::with('roomType')
             ->where('plan_flag', 0)
-        ->orderBy('reservation_date','desc')->get();
-
-
-        // $plans = AccommodationPlan::query()
-        //     // 最初の$keywordは実行可否の条件(bool)
-        //     // fnの第一引数はクエリビルダ、第二引数は条件時の使用データ
-        //     ->when($keyword, function($query, $keyword){
-        //         return $query->where('title','like',"%{$keyword}%")
-        //         ->orWhere('price',"%{$keyword}%")
-        //         ->orWhere('description','like',"%{$keyword}%");
-        //     })
-        //     ->orderBy('created_at', 'desc')
-        //     ->paginate('10');
-
-        // return view('accommodation_plan.index', compact('plans'));
-
-        // var_dump($reservationSlots);
+            ->orderBy('reservation_date','desc')->get();
         return view('admin.accommodation_plan.create',compact('reservationSlots'));
         
     }
@@ -74,7 +57,6 @@ class AccommodationPlanController extends Controller
             'description' => $validated['description'],
             'reservation_slot_id' => $validated['reservation_slot_id'],
         ]);
-        // var_dump($plan);
         ReservationSlot::where('id', $validated['reservation_slot_id'])
             ->update(['plan_flag' => 1 ]);
 
@@ -89,7 +71,6 @@ class AccommodationPlanController extends Controller
             }
         }
         return redirect()->route('accommodation-plans.index')->with('success','宿泊プランを作成しました！');
-        
         //Route [accomodation--plans.index] not defined.　　　accomm！！！odation
     }
 
@@ -101,7 +82,6 @@ class AccommodationPlanController extends Controller
      */
     public function show(AccommodationPlan $accommodationPlan)
     {   
-        // with()でリレーションができてないので、loadを使用、下記('メソッド名')
         $accommodationPlan->load('images');
         // return view('accommodation_plans.show', compact('accommodationPlan')); adminがない、planにsが多い
         return view('admin.accommodation_plan.show', compact('accommodationPlan'));
@@ -128,7 +108,6 @@ class AccommodationPlanController extends Controller
      */
     public function update(Request $request, AccommodationPlan $accommodationPlan)
     {
-        // 予約枠IDは固定として、変更不可とする
         $validated = $request->validate([
             'title' => 'required|string',
             'price' => 'required|integer|min:0',
@@ -153,9 +132,8 @@ class AccommodationPlanController extends Controller
             }
         }
 
-        
         if($request->hasFile('images')){
-            // 新規画像追加 with()もload()も多いので、画像自体のメソッドで繋がっているインスタンスの中で一番後ろの番号を取得
+            // 新規画像追加 
             $max_number = $accommodationPlan->images()->max('display_order')??-1;
             // var_dump($max_number);
             foreach($request->file('images') as $index => $image){
@@ -188,7 +166,7 @@ class AccommodationPlanController extends Controller
         }
         $accommodationPlan->delete();
         ReservationSlot::where('id', $accommodationPlan->reservation_slot_id)
-        ->update(['plan_flag' => 0]);
+            ->update(['plan_flag' => 0]);
         return redirect()->route('accommodation-plans.index')->with('success','宿泊プランを削除しました！');
     }
 
@@ -204,7 +182,6 @@ class AccommodationPlanController extends Controller
     public function search(Request $request)
     {  
         $keyword = $request->input('keyword');
-        // withに入るのは、リレーションメソッド（モデルに記載）
         $plans = AccommodationPlan::query()
             // 最初の$keywordは実行可否の条件(bool)
             // fnの第一引数はクエリビルダ、第二引数は条件時の使用データ
