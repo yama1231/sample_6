@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\RoomType;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -14,12 +16,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        $this->call([
 
-        \App\Models\User::factory()->create([
-            'name' => 'Test User3',
-            'email' => 'testtt@example.com',
-            'password' => bcrypt('11112222'),
+            UserSeeder::class,
+            RoomTypeSeeder::class,
+            ReservationSlotSeeder::class,
         ]);
+
+        
     }
 }
