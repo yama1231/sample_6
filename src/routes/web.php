@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReservationSlotController;
 use App\Models\AccommodationPlan;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CalendarController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,12 +38,14 @@ Route::get('/access', [AccessController::class, 'access'])->name('user.access');
 Route::get('/contact/index', [ContactController::class, 'index'])->name('user.contact.index');
 Route::post('/contact/confirm', [ContactController::class, 'confirm'])->name('user.contact.confirm');
 Route::post('/contact/complete', [ContactController::class, 'complete'])->name('user.contact.complete');
-//宿泊プラン index search show
-Route::resource('/accommodation-plans', AccommodationPlanController::class);
-Route::get('/accommodation-plans/top', [ContactController::class, 'top'])->name('user.plan.top');
-Route::get('/accommodation-plans/search', [ContactController::class, 'search'])->name('user.accommodation-plans.search');
-Route::get('/accommodation-plans/detail', [ContactController::class, 'detail'])->name('user.accommodation-plans.detail');
-
+//宿泊プラン index search show callendar
+Route::get('/accommodation-plans/top', [AccommodationPlanController::class, 'top'])->name('user.accommodation-plan.top');
+Route::get('/accommodation-plans/search', [AccommodationPlanController::class, 'search'])->name('user.accommodation-plan.search');
+Route::get('/accommodation-plans/detail', [AccommodationPlanController::class, 'detail'])->name('user.accommodation-plan.detail');
+// Route::get('/accommodation-plans/callendar', [AccommodationPlanController::class, 'callendar'])->name('user.accommodation-plan.callendar');
+Route::get('/accommodation-plans/calendar', [CalendarController::class, 'index'])->name('user.calendar');
+// Ajax用
+Route::get('/accommodation-plans/calendar/data',[CalendarController::class, 'getCalendarData'])->name('user.calendar.data');
 
 
 // 管理者側
@@ -71,6 +74,8 @@ Route::prefix('admin')->group(function () {
         Route::post('/dashboard/edit', [HomeController::class, 'dashboard_edit'])->name('dashboard_edit');
         // 予約枠
         Route::resource('/reservation_slots', ReservationSlotController::class);
+        // 宿泊プラン
+        Route::resource('accommodation-plans', AccommodationPlanController::class);
     });
 });
 require __DIR__.'/auth.php';
