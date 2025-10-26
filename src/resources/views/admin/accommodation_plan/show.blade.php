@@ -33,17 +33,14 @@
                 
                 <div class="mb-3">
                     <h5>設定料金：</h5>
-                    <p>{{ number_format($accommodationPlan->price) }}円</p>
+                    @foreach($accommodationPlan->prices as $price)
+                        <p>{{$price->room_type}}{{ number_format($price->price) }}円</p>
+                        <p>{{$price->roomType->name}}</p>
+                        
+                    @endforeach
                     <h5>説明：</h5>
                     <p>{{ $accommodationPlan->description }}</p>
                 </div>
-
-                @if ($accommodationPlan->room_slot_id)
-                    <div class="mb-3">
-                        <h5>予約枠ID</h5>
-                        <p>{{ $accommodationPlan->room_slot_id }}</p>
-                    </div>
-                @endif
 
                 <div class="d-flex gap-2">
                     <a href="{{ route('accommodation-plans.edit', $accommodationPlan) }}" class="btn btn-warning">編集</a>

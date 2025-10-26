@@ -33,7 +33,6 @@
                         {{-- 宿泊プラン：タイトル、金額、説明 --}}
                         <div class="card-body">
                             <h5 class="card-title">{{ $plan->title }}</h5>
-                            <p class="card-text">{{ number_format($plan->price) }}円</p>
                             <p class="card-text">{{ Str::limit($plan->description, 100) }}</p>
                         </div>
                         

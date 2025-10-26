@@ -5,17 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PlanImage extends Model
+class Price extends Model
 {
     use HasFactory;
-
+    
     protected $fillable = [
         'accommodation_plan_id',
-        'image_path',
-        'display_order',
+        'room_type_id',
+        'price',
     ];
 
     public function accommodationPlan(){
         return $this->belongsTo(AccommodationPlan::class);
+    }
+    public function roomType(){
+        return $this->belongsTo(RoomType::class);
     }
 }

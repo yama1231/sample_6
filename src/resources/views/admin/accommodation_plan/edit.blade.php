@@ -24,20 +24,7 @@
                         @enderror
                     </div>
 
-                    <div class="mb-3">
-                        <label for="price" class="form-label">価格 <span class="text-danger">*</span></label>
-                        <input type="number" 
-                                class="form-control @error('price') is-invalid @enderror" 
-                                id="price" 
-                                name="price" 
-                                value="{{ old('price', $accommodationPlan->price) }}" 
-                                required>
-                        @error('price')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="mb-3">
+                                        <div class="mb-3">
                         <label for="description" class="form-label">説明 <span class="text-danger">*</span></label>
                         <textarea class="form-control @error('description') is-invalid @enderror" 
                                     id="description" 
@@ -50,17 +37,20 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="room_slot_id" class="form-label">予約枠ID：</label>
-                        <h5>{{$accommodationPlan->reservationSlot->id}}</h5>
-                        {{-- <input type="number" 
-                                class="form-control @error('room_slot_id') is-invalid @enderror" 
-                                id="room_slot_id" 
-                                name="room_slot_id" 
-                                value="{{ old('room_slot_id', $accommodationPlan->id) }}"> --}}
-                        {{-- <p>{{$accommodationPlan->id}}</p> --}}
-                        {{-- @error('room_slot_id')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror --}}
+                        <label for="price" class="form-label">価格 <span class="text-danger">*</span></label>
+                        <div>
+                            @foreach($accommodationPlan->prices as $price)
+                                <label for="price" class="form-label">{{$price->roomType->name}}: <span class="text-danger">*</span></label>
+                                <input type="number" 
+                                        class="form-control @error('price') is-invalid @enderror" 
+                                        name="prices[{{$price->id}}]"
+                                        value="{{ old('prices.' . $price->id, $price->price) }}" 
+                                        required>
+                                @error('prices.' . $price->id)
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            @endforeach
+                        <div>
                     </div>
 
                     <!-- 既存画像表示 -->
@@ -117,5 +107,5 @@
     </div>
 </x-app-layout>
 <script>
-    // 画像選択を複数のフォームで選択できるようにする（時間があるときに）。追加ボタンを設置してフォームを増やせるようにする
+    // 画像選択を複数のフォームで選択できるようにする（余力あれば）。追加ボタンを設置してフォームを増やせるようにする
 </script>        

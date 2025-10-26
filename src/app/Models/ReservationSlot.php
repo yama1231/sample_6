@@ -14,9 +14,8 @@ class ReservationSlot extends Model
         'room_type_id',
         'available_rooms',
     ];
-    //  10/15 チャプター９の時点では使用しないが、チャプター１３の予約時にフォーマット変換しそうなので定義しておく
-    //  10/18 そのまま画面に持っていくと時刻まで表示されるので、一旦非表示
-    // protected $casts = [
+
+        // protected $casts = [
     //     'reservation_date' => 'date',
     // ];
 

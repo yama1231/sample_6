@@ -21,8 +21,8 @@ class AccommodationPlan extends Model
         return $this->hasMany(PlanImage::class)->orderBy('display_order');
     }
 
-    public function reservationSlot(){
-        return $this->belongsTo(ReservationSlot::class);
+    public function prices(){
+        return $this->hasMany(Price::class);
     }
 
 }

@@ -22,19 +22,6 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="price" class="form-label">価格 <span class="text-danger">*</span></label>
-                        <input type="number" 
-                                class="form-control @error('price') is-invalid @enderror" 
-                                id="price" 
-                                name="price" 
-                                value="{{ old('price') }}" 
-                                required>
-                        @error('price')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="mb-3">
                         <label for="description" class="form-label">説明 <span class="text-danger">*</span></label>
                         <textarea class="form-control @error('description') is-invalid @enderror" 
                                     id="description" 
@@ -47,24 +34,19 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="room_slot_id" class="form-label">予約枠ID</label>
-                        <select
-                            class="form-select"
-                            id="reservation_slot_id"
-                            name="reservation_slot_id"
-                            size="10"
-                            style="overflow-y:auto height:200px"
-                            required
-                        >
-                        <option value="">-- 予約枠を選択してください --</option>
-                        @foreach($reservationSlots as $slot)
-                            <option value="{{$slot->id}}" {{old('reservation_slot_id') == $slot->id ? 'selected' :''}}>
-                            {{-- 確認用{{$slot->id}}: {{$slot->reservation_date}} --- {{$slot->roomType->name}} --}}
-                                {{$slot->reservation_date}} --- {{$slot->roomType->name}}
-                            </option>
+                        <label for="price" class="form-label">価格 <span class="text-danger">*</span></label>
+                        @foreach($roomTypes as $roomType)
+                            <p>{{$roomType->name}}の部屋：</p>
+                            <input type="number" 
+                                    class="form-control @error('price') is-invalid @enderror" 
+                                    id="price_{{$roomType->id}}" 
+                                    name="prices[{{$roomType->id}}]" 
+                                    value="{{ old('price'.$roomType->id) }}" 
+                                    required>
+                            <input type="hidden" name="roomtype[{{$roomType->id}}]" value="{{$roomType->id}}">
                         @endforeach
-                        @error('reservation_slot_id')
-                            <div class="invalid-feedback d-block">{{$message}}</div>
+                        @error('price'.$roomType->id)
+                            <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 

@@ -17,4 +17,8 @@ class RoomType extends Model
     public function reservationSlots(){
         return $this->hasMany(ReservationSlot::class);
     }
+    
+    public function prices(){
+        return $this->hasMany(Price::class);
+    }
 }

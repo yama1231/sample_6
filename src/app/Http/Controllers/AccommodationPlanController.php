@@ -4,61 +4,55 @@ namespace App\Http\Controllers;
 
 use App\Models\AccommodationPlan;
 use App\Models\PlanImage;
-use App\Models\ReservationSlot;
+use App\Models\RoomType;
+use App\Models\Price;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class AccommodationPlanController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
+
     public function index()
     {  
         $plans = AccommodationPlan::with('images')->paginate('10');
         return view('admin.accommodation_plan.index', compact('plans'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create()
     {
-        $reservationSlots = ReservationSlot::with('roomType')
-            ->where('plan_flag', 0)
-            ->orderBy('reservation_date','desc')->get();
-        return view('admin.accommodation_plan.create',compact('reservationSlots'));
+        $roomTypes = RoomType::all();
+        return view('admin.accommodation_plan.create',compact('roomTypes'));
         
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(Request $request)
     {
         $validated = $request->validate([
             'title' => 'required|string',
-            'price' => 'required|integer|min:0',
+            'prices' => 'required|array',
+            'prices.*' => 'required|numeric|min:0',//各要素のチェック
             'description' => 'required|string',
-            'reservation_slot_id' => 'required|exists:reservation_slots,id',
             'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'roomtype' => 'required|array',
+            'roomtype.*'=> 'required|numeric',
         ]);
 
         $plan = AccommodationPlan::create([
             'title' => $validated['title'],
-            'price' => $validated['price'],
             'description' => $validated['description'],
-            'reservation_slot_id' => $validated['reservation_slot_id'],
         ]);
-        ReservationSlot::where('id', $validated['reservation_slot_id'])
-            ->update(['plan_flag' => 1 ]);
+        
+        foreach($validated['roomtype'] as $index => $_){
+            Price::create([
+                'accommodation_plan_id' => $plan->id,
+                'room_type_id' =>$validated['roomtype'][$index],
+                'price' => $validated['prices'][$index],
+            ]);
+        }
 
         if($request->hasFile('images')){
             foreach($request->file('images') as $index => $image){
@@ -70,58 +64,43 @@ class AccommodationPlanController extends Controller
                 ]);
             }
         }
+
         return redirect()->route('accommodation-plans.index')->with('success','宿泊プランを作成しました！');
-        //Route [accomodation--plans.index] not defined.　　　accomm！！！odation
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\AccommodationPlan  $accommodationPlan
-     * @return \Illuminate\Http\Response
-     */
+
     public function show(AccommodationPlan $accommodationPlan)
     {   
-        $accommodationPlan->load('images');
-        // return view('accommodation_plans.show', compact('accommodationPlan')); adminがない、planにsが多い
+        $accommodationPlan->load('images')->load('prices.roomType');
+
         return view('admin.accommodation_plan.show', compact('accommodationPlan'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\AccommodationPlan  $accommodationPlan
-     * @return \Illuminate\Http\Response
-     */
+
     public function edit(AccommodationPlan $accommodationPlan)
     {
         $accommodationPlan->load('images');
+
         return view('admin.accommodation_plan.edit', compact('accommodationPlan'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\AccommodationPlan  $accommodationPlan
-     * @return \Illuminate\Http\Response
-     */
+
     public function update(Request $request, AccommodationPlan $accommodationPlan)
     {
         $validated = $request->validate([
             'title' => 'required|string',
-            'price' => 'required|integer|min:0',
+            'prices' => 'required|array',
+            'prices.*' => 'required|numeric|min:0',//各要素のチェック
             'description' => 'required|string',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'delete_images' => 'array',
             'delete_images.*' => 'exists:plan_images,id',
         ]);
-
         $accommodationPlan->update([
             'title' => $validated['title'],
-            'price' => $validated['price'],
             'description' => $validated['description'],
         ]);
+
         // 画像削除
         if($request->has('delete_images')){
             // whereInの第2引数は配列、削除予定のインスタンスを取得
@@ -132,13 +111,11 @@ class AccommodationPlanController extends Controller
             }
         }
 
+        // 新規画像追加 
         if($request->hasFile('images')){
-            // 新規画像追加 
             $max_number = $accommodationPlan->images()->max('display_order')??-1;
-            // var_dump($max_number);
             foreach($request->file('images') as $index => $image){
                 $path = $image->store('plan_images','public');
-                // var_dump($accommodationPlan);
                 PlanImage::create([
                     'accommodation_plan_id' => $accommodationPlan->id,
                     'image_path' => $path,
@@ -146,38 +123,44 @@ class AccommodationPlanController extends Controller
                 ]);
             }
         }
+
+
+        // 料金の変更　　追加する！！！！！！！！！！！！！！！！１
+
+
         return redirect()->route('accommodation-plans.index')->with('success','宿泊プランを更新しました！');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\AccommodationPlan  $accommodationPlan
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy(AccommodationPlan $accommodationPlan)
     {
-        // 🌟publicディレクトリから画像が消えていないので、修正🌟
-        // 
         foreach($accommodationPlan->images as $image){
-            // var_dump($image->image_path);
             Storage::disk('public')->delete($image->image_path);
             $image->delete();
         }
+
+        foreach($accommodationPlan->prices as $price){
+            $price->delete();
+        }
+
         $accommodationPlan->delete();
-        ReservationSlot::where('id', $accommodationPlan->reservation_slot_id)
-            ->update(['plan_flag' => 0]);
+
         return redirect()->route('accommodation-plans.index')->with('success','宿泊プランを削除しました！');
     }
 
+
+
     ///////////以下、ユーザー側///////////////////////////////////////////
+
+
 
     public function top()
     {  
-        // withに入るのは、リレーションメソッド（モデルに記載）
-        $plans = AccommodationPlan::OrderBy('created_at', 'desc')->paginate('10');
-        return view('accommodation_plan.index', compact('plans'));
+        $plans = AccommodationPlan::with(['images','prices'])->OrderBy('created_at', 'desc')->paginate('10');
+
+        return view('user.accommodation-plan.top', compact('plans'));
     }
+
 
     public function search(Request $request)
     {  
@@ -185,27 +168,36 @@ class AccommodationPlanController extends Controller
         $plans = AccommodationPlan::query()
             // 最初の$keywordは実行可否の条件(bool)
             // fnの第一引数はクエリビルダ、第二引数は条件時の使用データ
+            // whereの最後に；
             ->when($keyword, function($query, $keyword){
                 return $query->where('title','like',"%{$keyword}%")
-                ->orWhere('price',"%{$keyword}%")
-                ->orWhere('description','like',"%{$keyword}%");
+                ->orWhere('description','like',"%{$keyword}%")
+                ->orWhereHas('prices', function($price_q) use ($keyword){
+                    $price_q->where('price', 'like', "%$keyword%")
+                    ;
+                });
             })
             ->orderBy('created_at', 'desc')
             ->paginate('10');
 
-        return view('accommodation_plan.index', compact('plans'));
+        return view('user.accommodation-plan.top', compact('plans'));
     }
 
-        public function detail(AccommodationPlan $accommodationPlan)
+
+        public function detail(Request $request)
     {  
-        // withに入るのは、リレーションメソッド（モデルに記載）
-        $plan = AccommodationPlan::findOrFail($accommodationPlan);
-        return view('accommodation_plan.detail', compact('plan'));
+        $plan_id = $request->plan_id;
+        $plan = AccommodationPlan::with(['images','prices'])->findOrFail($plan_id);
+
+        return view('user.accommodation-plan.detail', compact('plan'));
     }
 
 
-
-
-
-
+    public function calendar(Request $request)
+    {  
+        $plan_id = $request->plan_id;
+        $plan = AccommodationPlan::findOrFail($plan_id);
+        
+        return view('user.accommodation-plan.calendar', compact('plan'));
+    }
 }
