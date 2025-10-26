@@ -22,7 +22,7 @@
 
         <!-- Navigation Links -->
         <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-            <a href="{{ route('user.access') }}">
+            <a href="{{ route('user.accommodation-plan.top') }}">
                 {{ __('宿泊プラン') }}
             </a>
             <a href="{{ route('user.access') }}">
