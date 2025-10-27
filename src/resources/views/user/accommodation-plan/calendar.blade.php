@@ -12,8 +12,17 @@
 @section('content')
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
 <div class="container calendar-wrapper">
-    <div class="calendar-card">
 
+
+    
+        <div>
+            <br>
+            <p>ご選択中のプラン：{{$plan->title}}</p>
+            <p>部屋タイプ：{{$roomTypes[$selectedRoomTypeId]->name}}</p>
+            <p>料金：{{$price->price}}円</p>
+        </div>
+
+    <div class="calendar-card">
         <div class="room-type-selector mb-4">
             <h5>部屋タイプを選択</h5>
             <div class="btn-group" role="group" aria-label="部屋タイプ選択">
@@ -77,14 +86,15 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const roomTypeInputs = document.querySelectorAll('input[name="room_type"]');
+        // <- NodeList foreach/forが使える
+        // CSSセレクタは色々選べる->
+        const roomTypeInputs = document.querySelectorAll('input[name="room_type"]');//回して３つある
         const calendarBody = document.getElementById('calendarBody');
         const loadingOverlay = document.getElementById('loadingOverlay');
         const prevMonthBtn = document.getElementById('prevMonth');
         const nextMonthBtn = document.getElementById('nextMonth');
         const calendarTitle = document.getElementById('calendarTitle');
 
-        let currentYm = '{{ $prev }}';
 
         // 部屋タイプ変更時の処理
         roomTypeInputs.forEach(input => {
@@ -92,32 +102,32 @@
                 const roomTypeId = this.value;
                 const currentYmFromNav = getCurrentYmFromTitle();
                 loadCalendar(currentYmFromNav, roomTypeId);
+                // 上のプラン内容も変更
+                
             });
         })
-            
-        
 
-        // 前月ボタン
+        // 前月ボタン   click
         prevMonthBtn.addEventListener('click', function(e) {
-            e.preventDefault();
+            e.preventDefault();//上部スクロール防止
             const ym = this.dataset.ym;
             const roomTypeId = getSelectedRoomType();
             loadCalendar(ym, roomTypeId);
         });
 
-        // 次月ボタン
+        // 次月ボタン   click
         nextMonthBtn.addEventListener('click', function(e) {
-            e.preventDefault();
+            e.preventDefault();//上部スクロール防止
             const ym = this.dataset.ym;
             const roomTypeId = getSelectedRoomType();
             loadCalendar(ym, roomTypeId);
         });
 
-        // カレンダーデータ取得
+        // 本番用
+        // カレンダーデータ取得＋calendarBody.innerHTMLで更新
         function loadCalendar(ym, roomTypeId) {
-        showLoading();
-        
-        fetch(`{{ route('user.calendar.data') }}?ym=${ym}&room_type_id=${roomTypeId}`)
+            showLoading();
+            fetch(`{{ route('user.calendar.data') }}?ym=${ym}&room_type_id=${roomTypeId}`)
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -133,6 +143,38 @@
                 hideLoading();
             });
         }
+
+        // テスト用
+        // カレンダーデータ取得＋calendarBody.innerHTMLで更新
+        function loadCalendar(ym, roomTypeId) {
+            showLoading();
+            fetch(`{{ route('user.calendar.data') }}?ym=${ym}&room_type_id=${roomTypeId}&plan_id=${plan_id}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    calendarBody.innerHTML = data.weeks.join('');
+                    // プラン料金と部屋種別を更新
+
+                    updateNavigation(ym);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('カレンダーの読み込みに失敗しました');
+            })
+            .finally(() => {
+                hideLoading();
+            });
+        }
+
+        function updatePlanContent()
+
+
+
+
+
+
+
 
         // ナビゲーション更新
         function updateNavigation(ym) {
@@ -154,9 +196,6 @@
             prevMonthBtn.dataset.ym = prevYm;
             nextMonthBtn.dataset.ym = nextYm;
         }
-
-
-
 
         // 選択中の部屋タイプID取得
         function getSelectedRoomType() {
@@ -184,10 +223,8 @@
         function hideLoading() {
             loadingOverlay.style.display = 'none';
         }
-
     });
 </script>
-
 
 <style>
     
@@ -228,8 +265,5 @@
     z-index: 9999;
 }
 </style>
-
-
-
 
 @endsection

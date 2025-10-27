@@ -43,6 +43,7 @@ Route::get('/accommodation-plans/top', [AccommodationPlanController::class, 'top
 Route::get('/accommodation-plans/search', [AccommodationPlanController::class, 'search'])->name('user.accommodation-plan.search');
 Route::get('/accommodation-plans/detail', [AccommodationPlanController::class, 'detail'])->name('user.accommodation-plan.detail');
 // Route::get('/accommodation-plans/callendar', [AccommodationPlanController::class, 'callendar'])->name('user.accommodation-plan.callendar');
+//callendar
 Route::get('/accommodation-plans/calendar', [CalendarController::class, 'index'])->name('user.calendar');
 // Ajax用
 Route::get('/accommodation-plans/calendar/data',[CalendarController::class, 'getCalendarData'])->name('user.calendar.data');

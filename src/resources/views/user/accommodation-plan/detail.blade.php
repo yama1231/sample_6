@@ -43,7 +43,7 @@
                         </div>
                     @endif
                     <div class="d-flex gap-2">
-                        <a href="{{ route('user.calendar') }}" class="btn btn-primary">予約する</a>
+                        <a href="{{ route('user.calendar', ['plan_id' => $plan->id]) }}" class="btn btn-primary">予約する</a>
                         <a href="{{ route('user.accommodation-plan.top') }}" class="btn btn-secondary">キャンセル</a>
                     </div>
             </div>

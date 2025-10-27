@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\ReservationSlot;
+use App\Models\AccommodationPlan;
 use App\Models\RoomType;
+use App\Models\Price;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use \Yasumi\Yasumi;
@@ -14,7 +16,9 @@ class CalendarController extends Controller
     public function index(Request $request)
     {
         $ym = $request->input('ym', Carbon::now()->format('Y-m'));
-        
+        $plan_id = $request->plan_id;
+        $plan = AccommodationPlan::with('prices')->findOrFail($plan_id);
+
         // Carbonクラス（日付オブジェクト）に変換しておく
         $date = Carbon::createFromFormat('Y-m', $ym)->startOfMonth();
         
@@ -28,17 +32,22 @@ class CalendarController extends Controller
         // デフォルトは部屋タイプID=1とする
         $selectedRoomTypeId = 1;
 
+        $price = Price::where('accommodation_plan_id',$plan_id)
+        ->where('room_type_id', $selectedRoomTypeId)
+        ->first();
+
         // カレンダー生成
         $weeks = $this->generateCalendar($date, $selectedRoomTypeId);
         
-        return view('user.accommodation-plan.calendar', compact('html_title', 'prev', 'next', 'weeks', 'roomTypes', 'selectedRoomTypeId'));
+        return view('user.accommodation-plan.calendar', compact('html_title', 'prev', 'next', 'weeks', 'roomTypes', 'selectedRoomTypeId','plan','price'));
     }
 
 
     // Ajax
     public function getCalendarData(Request $request)
     {
-        // まだ'2025-10'という文字列
+        // 本番用
+        // // まだ'2025-10'という文字列
         $ym = $request->input('ym',Carbon::now()->format('Y-m'));
         $roomTypeId = $request->input('room_type_id', 1);
         // Carbonオブジェクトに変換
@@ -49,6 +58,30 @@ class CalendarController extends Controller
             'success' => true,
             'weeks' =>$weeks
         ]);
+
+
+
+
+        // テスト用
+        // $ym = $request->input('ym',Carbon::now()->format('Y-m'));
+        // $roomTypeId = $request->input('room_type_id', 1);
+        // $plan_id = $request->input('plan_id', 1);//1つしかないが、一応
+
+        // $price = Price::where('accommodation_plan_id',$plan_id)
+        // ->where('room_type_id', $roomTypeId)
+        // ->first();
+        // Carbonオブジェクトに変換
+        // $date = Carbon::createFromFormat('Y-m', $ym)->startOfMonth();
+        // $weeks = $this->generateCalendar($date, $roomTypeId);
+
+        // return response()->json([
+        //     'price' => $price,
+        //     'ym' => $ym,
+        //     'success' => true,
+        //     // 'weeks' =>$weeks
+        // ]);
+
+
     }
 
 
@@ -69,7 +102,6 @@ class CalendarController extends Controller
         // 月の日数 31日
         $daysInMonth = $date->daysInMonth;
         
-
         // 週のカウンター
         $week = [];
         

@@ -192,12 +192,4 @@ class AccommodationPlanController extends Controller
         return view('user.accommodation-plan.detail', compact('plan'));
     }
 
-
-    public function calendar(Request $request)
-    {  
-        $plan_id = $request->plan_id;
-        $plan = AccommodationPlan::findOrFail($plan_id);
-        
-        return view('user.accommodation-plan.calendar', compact('plan'));
-    }
 }
