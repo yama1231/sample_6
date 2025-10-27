@@ -14,13 +14,25 @@
 <div class="container calendar-wrapper">
 
 
-    
-        <div>
+    {{-- 本番用 --}}
+        {{-- <div> 
             <br>
             <p>ご選択中のプラン：{{$plan->title}}</p>
-            <p>部屋タイプ：{{$roomTypes[$selectedRoomTypeId]->name}}</p>
-            <p>料金：{{$price->price}}円</p>
+            <p id="roomTypeName">部屋タイプ：{{$roomTypes[$selectedRoomTypeId]->name}}</p>
+            <p id="price">料金：{{$price->price}}円</p>
+        </div> --}}
+    
+
+        {{-- テスト用 --}}
+        <div>
+            <br>
+            <p>選択中のプラン：{{$plan->title}}</p>
+            <p id="roomTypeName">部屋タイプ：{{$room_type_name}}</p>
+            <p id="price">料金：{{$price->price}}円</p>
         </div>
+
+
+
 
     <div class="calendar-card">
         <div class="room-type-selector mb-4">
@@ -96,18 +108,33 @@
         const calendarTitle = document.getElementById('calendarTitle');
 
 
+        // test
+        const roomTypeName = document.getElementById('roomTypeName')
+        const price = document.getElementById('price')
+
+        // 本番用
         // 部屋タイプ変更時の処理
+        // roomTypeInputs.forEach(input => {
+        //     input.addEventListener('change', function(){
+        //         const roomTypeId = this.value;
+        //         const currentYmFromNav = getCurrentYmFromTitle();
+        //         loadCalendar(currentYmFromNav, roomTypeId);
+        //     });
+        // })
+
+
+        // テスト用
+        // 部屋タイプ変更時の処理.  ３つあるラジオボタンを押されたら更新する
         roomTypeInputs.forEach(input => {
             input.addEventListener('change', function(){
                 const roomTypeId = this.value;
                 const currentYmFromNav = getCurrentYmFromTitle();
                 loadCalendar(currentYmFromNav, roomTypeId);
-                // 上のプラン内容も変更
-                
             });
         })
 
-        // 前月ボタン   click
+
+        // 前月ボタン   click  
         prevMonthBtn.addEventListener('click', function(e) {
             e.preventDefault();//上部スクロール防止
             const ym = this.dataset.ym;
@@ -125,6 +152,30 @@
 
         // 本番用
         // カレンダーデータ取得＋calendarBody.innerHTMLで更新
+        // function loadCalendar(ym, roomTypeId) {
+        //     showLoading();
+        //     fetch(`{{ route('user.calendar.data') }}?ym=${ym}&room_type_id=${roomTypeId}`)
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         if (data.success) {
+        //             calendarBody.innerHTML = data.weeks.join('');
+        //             updateNavigation(ym);
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.error('Error:', error);
+        //         alert('カレンダーの読み込みに失敗しました');
+        //     })
+        //     .finally(() => {
+        //         hideLoading();
+        //     });
+        // }
+
+
+
+
+        // テスト用 plan_idは元々持ってるから別途送らなくてよい
+        // カレンダーデータ取得＋calendarBody.innerHTMLで更新
         function loadCalendar(ym, roomTypeId) {
             showLoading();
             fetch(`{{ route('user.calendar.data') }}?ym=${ym}&room_type_id=${roomTypeId}`)
@@ -132,6 +183,10 @@
             .then(data => {
                 if (data.success) {
                     calendarBody.innerHTML = data.weeks.join('');
+                    const room_type_name = data.room_type_name;
+                    const aaa = data.room_type_name;
+                    roomTypeName.textContent =`部屋タイプ：${room_type_name}`;
+                    price.textContent = `料金：${data.price}円`;
                     updateNavigation(ym);
                 }
             })
@@ -143,33 +198,6 @@
                 hideLoading();
             });
         }
-
-        // テスト用
-        // カレンダーデータ取得＋calendarBody.innerHTMLで更新
-        function loadCalendar(ym, roomTypeId) {
-            showLoading();
-            fetch(`{{ route('user.calendar.data') }}?ym=${ym}&room_type_id=${roomTypeId}&plan_id=${plan_id}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    calendarBody.innerHTML = data.weeks.join('');
-                    // プラン料金と部屋種別を更新
-
-                    updateNavigation(ym);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('カレンダーの読み込みに失敗しました');
-            })
-            .finally(() => {
-                hideLoading();
-            });
-        }
-
-        function updatePlanContent()
-
-
 
 
 

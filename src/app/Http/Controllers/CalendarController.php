@@ -13,73 +13,110 @@ use Illuminate\Support\Facades\Log;
 
 class CalendarController extends Controller
 {
+    // 本番用
+    // public function index(Request $request)
+    // {
+    //     $ym = $request->input('ym', Carbon::now()->format('Y-m'));
+    //     $plan_id = $request->plan_id;
+    //     $plan = AccommodationPlan::with('prices')->findOrFail($plan_id);
+    //     // Carbonクラス（日付オブジェクト）に変換しておく
+    //     $date = Carbon::createFromFormat('Y-m', $ym)->startOfMonth();
+    //     $html_title = $date->isoFormat('YYYY年 M月');
+    //     $prev = $date->copy()->subMonth()->format('Y-m');
+    //     $next = $date->copy()->addMonth()->format('Y-m');
+    //     $roomTypes = RoomType::all();
+    //     // デフォルトは部屋タイプID=1とする
+    //     $selectedRoomTypeId = 1;
+    //     $price = Price::where('accommodation_plan_id',$plan_id)
+    //     ->where('room_type_id', $selectedRoomTypeId)
+    //     ->first();
+    //     // カレンダー生成
+    //     $weeks = $this->generateCalendar($date, $selectedRoomTypeId);
+    //     return view('user.accommodation-plan.calendar', compact('html_title', 'prev', 'next', 'weeks', 'roomTypes', 'selectedRoomTypeId','plan','price'));
+    // }
+
+
     public function index(Request $request)
     {
         $ym = $request->input('ym', Carbon::now()->format('Y-m'));
         $plan_id = $request->plan_id;
         $plan = AccommodationPlan::with('prices')->findOrFail($plan_id);
-
         // Carbonクラス（日付オブジェクト）に変換しておく
         $date = Carbon::createFromFormat('Y-m', $ym)->startOfMonth();
-        
         $html_title = $date->isoFormat('YYYY年 M月');
-        
         $prev = $date->copy()->subMonth()->format('Y-m');
         $next = $date->copy()->addMonth()->format('Y-m');
-        
         $roomTypes = RoomType::all();
-
         // デフォルトは部屋タイプID=1とする
         $selectedRoomTypeId = 1;
-
+        // インスタンス
         $price = Price::where('accommodation_plan_id',$plan_id)
         ->where('room_type_id', $selectedRoomTypeId)
         ->first();
-
+        $room_type = RoomType::where('id', $selectedRoomTypeId)->first();//Postmanにfindダメって言われた。後で調べる
+        $room_type_name = $room_type->name;
         // カレンダー生成
         $weeks = $this->generateCalendar($date, $selectedRoomTypeId);
-        
-        return view('user.accommodation-plan.calendar', compact('html_title', 'prev', 'next', 'weeks', 'roomTypes', 'selectedRoomTypeId','plan','price'));
+        return view('user.accommodation-plan.calendar', compact('html_title', 'prev', 'next', 'weeks', 'roomTypes', 'selectedRoomTypeId','plan','price','room_type_name'));
     }
+
+
+
+
+
+
+
+
+
+
 
 
     // Ajax
     public function getCalendarData(Request $request)
     {
-        // 本番用
-        // // まだ'2025-10'という文字列
-        $ym = $request->input('ym',Carbon::now()->format('Y-m'));
-        $roomTypeId = $request->input('room_type_id', 1);
-        // Carbonオブジェクトに変換
-        $date = Carbon::createFromFormat('Y-m', $ym)->startOfMonth();
-        $weeks = $this->generateCalendar($date, $roomTypeId);
+        // // 本番用
+        // // // まだ'2025-10'という文字列
+        // $ym = $request->input('ym',Carbon::now()->format('Y-m'));
+        // $roomTypeId = $request->input('room_type_id', 1);
+        // // Carbonオブジェクトに変換
+        // $date = Carbon::createFromFormat('Y-m', $ym)->startOfMonth();
+        // $weeks = $this->generateCalendar($date, $roomTypeId);
 
-        return response()->json([
-            'success' => true,
-            'weeks' =>$weeks
-        ]);
+        // return response()->json([
+        //     'success' => true,
+        //     'weeks' =>$weeks
+        // ]);
 
 
 
 
         // テスト用
-        // $ym = $request->input('ym',Carbon::now()->format('Y-m'));
-        // $roomTypeId = $request->input('room_type_id', 1);
-        // $plan_id = $request->input('plan_id', 1);//1つしかないが、一応
-
-        // $price = Price::where('accommodation_plan_id',$plan_id)
-        // ->where('room_type_id', $roomTypeId)
-        // ->first();
+        $ym = $request->input('ym',Carbon::now()->format('Y-m'));
+        $roomTypeId = $request->input('room_type_id', 1);
+        $plan_id = $request->input('plan_id', 1);//1つしかないが、一応
+        // var_dump("aaa");
+        $room_type = RoomType::where('id', $roomTypeId)->first();//Postmanにfindダメって言われた。後で調べる
+        // var_dump($room_type);
+        $room_type_name = $room_type->name;
+        // var_dump($room_type_name);
+        $price_instance = Price::with('roomType')
+        ->where('accommodation_plan_id',$plan_id)
+        ->where('room_type_id', $roomTypeId)
+        ->first();//名前が酷すぎる。後で変える
+        // var_dump($price_instance);
+        $price = $price_instance->price;
+        // var_dump($price);
         // Carbonオブジェクトに変換
-        // $date = Carbon::createFromFormat('Y-m', $ym)->startOfMonth();
-        // $weeks = $this->generateCalendar($date, $roomTypeId);
+        $date = Carbon::createFromFormat('Y-m', $ym)->startOfMonth();
+        $weeks = $this->generateCalendar($date, $roomTypeId);
 
-        // return response()->json([
-        //     'price' => $price,
-        //     'ym' => $ym,
-        //     'success' => true,
-        //     // 'weeks' =>$weeks
-        // ]);
+        return response()->json([
+            'room_type_name' => $room_type_name,
+            'price' => $price,
+            'ym' => $ym,
+            'success' => true,
+            'weeks' =>$weeks
+        ]);
 
 
     }
