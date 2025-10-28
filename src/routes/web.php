@@ -47,6 +47,14 @@ Route::get('/accommodation-plans/detail', [AccommodationPlanController::class, '
 Route::get('/accommodation-plans/calendar', [CalendarController::class, 'index'])->name('user.calendar');
 // Ajax用
 Route::get('/accommodation-plans/calendar/data',[CalendarController::class, 'getCalendarData'])->name('user.calendar.data');
+// 予約
+// Route::resource('/reservations', ReservationController::class);
+
+
+
+
+
+
 
 
 // 管理者側
