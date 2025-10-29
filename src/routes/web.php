@@ -9,6 +9,7 @@ use App\Http\Controllers\ReservationSlotController;
 use App\Models\AccommodationPlan;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\UserReservationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,7 +49,11 @@ Route::get('/accommodation-plans/calendar', [CalendarController::class, 'index']
 // Ajax用
 Route::get('/accommodation-plans/calendar/data',[CalendarController::class, 'getCalendarData'])->name('user.calendar.data');
 // 予約
-// Route::resource('/reservations', ReservationController::class);
+Route::get('/reservation/create', [UserReservationController::class, 'create'])->name('user.reservation.create');
+Route::post('/reservation/confirm/plan', [UserReservationController::class, 'confirmPlan'])->name('user.reservation.confirmPlan');
+Route::get('/reservation/confirm/user_detail', [UserReservationController::class, 'confirmUser'])->name('user.reservation.confirmUser');
+Route::post('/reservation/complete', [UserReservationController::class, 'complete'])->name('user.reservation.complete');
+
 
 
 

@@ -123,7 +123,10 @@
         // カレンダーデータ取得＋calendarBody.innerHTMLで更新
         function loadCalendar(ym, roomTypeId) {
             showLoading();
-            fetch(`{{ route('user.calendar.data') }}?ym=${ym}&room_type_id=${roomTypeId}`)
+            // ここでもPHPの変数は使える
+            const planId = {{$plan->id}};
+            
+            fetch(`{{ route('user.calendar.data') }}?ym=${ym}&room_type_id=${roomTypeId}&plan_id=${planId}`)
             .then(response => response.json())
             .then(data => {
                 if (data.success) {

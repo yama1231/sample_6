@@ -71,7 +71,7 @@ class CalendarController extends Controller
      * カレンダーのHTML生成
      */
     // private function generateCalendar(Carbon $date, $roomTypeId)
-    private function generateCalendar(Carbon $date, $roomTypeId, $plan_id)
+    private function generateCalendar(Carbon $date, $roomTypeId, $planId)
     {
         $weeks = [];
         $today = Carbon::today();
@@ -80,6 +80,7 @@ class CalendarController extends Controller
         // 例：startOfMonth()-> date: 2025-10-01
         // 2025-10-01 は水曜日なので、dayOfWeekで３を返す
         $firstDayOfWeek = $date->copy()->startOfMonth()->dayOfWeek;
+        
         // 月の日数 31日
         $daysInMonth = $date->daysInMonth;
         // 週のカウンター
@@ -90,9 +91,9 @@ class CalendarController extends Controller
         }
         // 当月と翌月の予約枠を取得
         $startOfThisMonth = $date->copy()->startOfMonth();
-        // $endOfNextMonth = $date->copy()->addMonth()->endOfMonth();
         $endOfThisMonth = $date->copy()->endOfMonth();
 
+        // 1種別の予約枠（日付さえ絞ればidが取得できる）
         $slots = ReservationSlot::with('roomType')
             ->where('room_type_id', $roomTypeId)
             ->whereBetween('reservation_date',[$startOfThisMonth, $endOfThisMonth])
@@ -116,14 +117,16 @@ class CalendarController extends Controller
             $btn_route = '#';//get送信
 
             if(isset($slots[$dateKey])){
+                $reservationSlotId = $slots[$dateKey]->id;
                 $availableRooms = $slots[$dateKey]->available_rooms ?? 0;
                 if($availableRooms >= 2){
                     $statusSymbol = '◯';
-                    $btn_route = 'http://localhost:8080/reservation/create';
+                    // $btn_route = 'http://localhost:8080/reservation/create';
+                    $btn_route = route('user.reservation.create', ['plan_id' => $planId, 'room_type_id' => $roomTypeId, 'reservation_slot_id' => $reservationSlotId]);
                     $linkActive = '';
                 }elseif($availableRooms == 1){
                     $statusSymbol = '△';
-                    $btn_route = 'http://localhost:8080/reservation/create';
+                    $btn_route = route('user.reservation.create', ['plan_id' => $planId, 'room_type_id' => $roomTypeId, 'reservation_slot_id' => $reservationSlotId]);
                     $linkActive = '';
                 }else{
                     $statusSymbol = '×';
@@ -132,13 +135,12 @@ class CalendarController extends Controller
                 }
             }
 
-            $week[] = "
-                <td class='calendar-cell{$todayClass}{$holidayClass}'>
-                    <div class='date-number'>{$day}</div>
-                    <div class='availability-status'>{$statusSymbol} {$availableRooms}室</div>
-                    <a href='{$btn_route}'class='{$linkActive}'>予約する</a>
-                </td>
-            ";
+            $week[] =
+            "<td class='calendar-cell{$todayClass}{$holidayClass}'>
+                <div class='date-number'>{$day}</div>
+                <div class='availability-status'>{$statusSymbol} {$availableRooms}室</div>
+                <a href='{$btn_route}'class='{$linkActive}'>予約する</a>
+            </td>";
 
             // 土曜日の場合、行を閉じて新しい週を開始
             if ($currentDate->dayOfWeek === Carbon::SATURDAY) {

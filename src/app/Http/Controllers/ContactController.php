@@ -67,7 +67,6 @@ class ContactController extends Controller
         ]);
 
         $session_data = session()->only(['name','email','title','detail']);
-        $input = $request->all();
         // ユーザへ送信　
         Mail::to($session_data['email'])->send(new ContactMail('user.contact.mail', 'お問い合わせが完了しました', $session_data));
         // 管理者へ送信

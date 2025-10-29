@@ -15,9 +15,9 @@ class ReservationSlot extends Model
         'available_rooms',
     ];
 
-        // protected $casts = [
-    //     'reservation_date' => 'date',
-    // ];
+        protected $casts = [
+        'reservation_date' => 'date',
+    ];
 
     public function roomType()
     {

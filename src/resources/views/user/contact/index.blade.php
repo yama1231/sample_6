@@ -7,16 +7,16 @@
             <br>
             <div class="mb-3">
                 <label for="name" class="form-label">お名前</label>
-                <input type="text" name="name" class="form-control" id="name" aria-describedby="emailHelp">
+                <input type="text" name="name" class="form-control" id="name">
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">メールアドレス</label>
-                <input type="text" name="email" class="form-control" id="email" aria-describedby="emailHelp">
+                <input type="text" name="email" class="form-control" id="email">
                 {{-- type="email"  --}}
             </div>
             <div class="mb-3">
                 <label for="title" class="form-label">件名</label>
-                <input type="text" name="title" class="form-control" id="title" aria-describedby="emailHelp">
+                <input type="text" name="title" class="form-control" id="title">
             </div>
             <div class="mb-3">
                 <label for="detail" class="form-label">お問合せ内容</label>
