@@ -137,6 +137,8 @@
     box-shadow: 0 5px 20px rgba(255, 188, 0, 0.4);
 }
 
+.hidden { display: none; }
+
 .today::after {
     content: "Today";
     position: absolute;
@@ -218,3 +220,8 @@
         transform: translateY(0);
     }
 }
+
+a.disabled {
+    display: none !important;
+}
+

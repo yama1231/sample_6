@@ -13,29 +13,6 @@ use Illuminate\Support\Facades\Log;
 
 class CalendarController extends Controller
 {
-    // 本番用
-    // public function index(Request $request)
-    // {
-    //     $ym = $request->input('ym', Carbon::now()->format('Y-m'));
-    //     $plan_id = $request->plan_id;
-    //     $plan = AccommodationPlan::with('prices')->findOrFail($plan_id);
-    //     // Carbonクラス（日付オブジェクト）に変換しておく
-    //     $date = Carbon::createFromFormat('Y-m', $ym)->startOfMonth();
-    //     $html_title = $date->isoFormat('YYYY年 M月');
-    //     $prev = $date->copy()->subMonth()->format('Y-m');
-    //     $next = $date->copy()->addMonth()->format('Y-m');
-    //     $roomTypes = RoomType::all();
-    //     // デフォルトは部屋タイプID=1とする
-    //     $selectedRoomTypeId = 1;
-    //     $price = Price::where('accommodation_plan_id',$plan_id)
-    //     ->where('room_type_id', $selectedRoomTypeId)
-    //     ->first();
-    //     // カレンダー生成
-    //     $weeks = $this->generateCalendar($date, $selectedRoomTypeId);
-    //     return view('user.accommodation-plan.calendar', compact('html_title', 'prev', 'next', 'weeks', 'roomTypes', 'selectedRoomTypeId','plan','price'));
-    // }
-
-
     public function index(Request $request)
     {
         $ym = $request->input('ym', Carbon::now()->format('Y-m'));
@@ -62,54 +39,23 @@ class CalendarController extends Controller
     }
 
 
-
-
-
-
-
-
-
-
-
-
     // Ajax
     public function getCalendarData(Request $request)
     {
-        // // 本番用
-        // // // まだ'2025-10'という文字列
-        // $ym = $request->input('ym',Carbon::now()->format('Y-m'));
-        // $roomTypeId = $request->input('room_type_id', 1);
-        // // Carbonオブジェクトに変換
-        // $date = Carbon::createFromFormat('Y-m', $ym)->startOfMonth();
-        // $weeks = $this->generateCalendar($date, $roomTypeId);
-
-        // return response()->json([
-        //     'success' => true,
-        //     'weeks' =>$weeks
-        // ]);
-
-
-
-
-        // テスト用
         $ym = $request->input('ym',Carbon::now()->format('Y-m'));
         $roomTypeId = $request->input('room_type_id', 1);
         $plan_id = $request->input('plan_id', 1);//1つしかないが、一応
-        // var_dump("aaa");
-        $room_type = RoomType::where('id', $roomTypeId)->first();//Postmanにfindダメって言われた。後で調べる
-        // var_dump($room_type);
+        // $room_type = RoomType::where('id', $roomTypeId)->first();
+        $room_type = RoomType::find($roomTypeId);
         $room_type_name = $room_type->name;
-        // var_dump($room_type_name);
         $price_instance = Price::with('roomType')
         ->where('accommodation_plan_id',$plan_id)
         ->where('room_type_id', $roomTypeId)
-        ->first();//名前が酷すぎる。後で変える
-        // var_dump($price_instance);
+        ->first();
         $price = $price_instance->price;
-        // var_dump($price);
+
         // Carbonオブジェクトに変換
         $date = Carbon::createFromFormat('Y-m', $ym)->startOfMonth();
-        // $weeks = $this->generateCalendar($date, $roomTypeId); 本番用
         $weeks = $this->generateCalendar($date, $roomTypeId, $plan_id);
 
         return response()->json([
@@ -119,12 +65,8 @@ class CalendarController extends Controller
             'success' => true,
             'weeks' =>$weeks
         ]);
-
-
     }
 
-
-    
     /**
      * カレンダーのHTML生成
      */
@@ -155,8 +97,10 @@ class CalendarController extends Controller
             ->where('room_type_id', $roomTypeId)
             ->whereBetween('reservation_date',[$startOfThisMonth, $endOfThisMonth])
             ->get()
-            ->keyBy('reservation_date');//下で日付ごとの空き部屋を取得
-        
+            ->keyBy(function($slot) {
+            // Carbonオブジェクトを文字列形式に変換してキーとする(日付で部屋数を確認する)
+            return $slot->reservation_date->format('Y-m-d');
+            });
         // 日付セル
         for ($day = 1; $day <= $daysInMonth; $day++) {
             $currentDate = $date->copy()->day($day);
@@ -168,44 +112,33 @@ class CalendarController extends Controller
             $dateKey = $currentDate->format('Y-m-d');
             $availableRooms = 0;
             $statusSymbol = '×';
+            $linkActive = 'disabled';
+            $btn_route = '#';//get送信
 
-
-            // 最初は種別１（デフォ）の予約枠の空き部屋数
-            //上で宣言しているがwarning対策のために宣言及びnullチェック
             if(isset($slots[$dateKey])){
                 $availableRooms = $slots[$dateKey]->available_rooms ?? 0;
                 if($availableRooms >= 2){
                     $statusSymbol = '◯';
+                    $btn_route = 'http://localhost:8080/reservation/create';
+                    $linkActive = '';
                 }elseif($availableRooms == 1){
                     $statusSymbol = '△';
+                    $btn_route = 'http://localhost:8080/reservation/create';
+                    $linkActive = '';
                 }else{
                     $statusSymbol = '×';
+                    $btn_route = '#';
+                    $linkActive = 'disabled';
                 }
             }
-            // 本番用
-            // $week[] = "<td class='calendar-cell{$todayClass}{$holidayClass}'>
-            //     <div class='date-number'>{$day}</div>
-            //     <div class='availability-status'>{$statusSymbol} {$availableRooms}室</div>
-            // </td>";
 
-            
-            // "<a href="{{ route('user.calendar', ['plan_id' => $plan->id]) }}">予約する</a>"
-            // $btn_route = "{{ route('user.top', $plan_id ]}}";
-            $btn_route = 'http://localhost:8080/top';//get送信
-            // $aaa = "<a href="http://localhost:8080/accommodation-plans/calendar?plan_id=1">Visit W3Schools</a>";
-            // テスト用.   もしかして文字列を入れられない？
             $week[] = "
                 <td class='calendar-cell{$todayClass}{$holidayClass}'>
                     <div class='date-number'>{$day}</div>
                     <div class='availability-status'>{$statusSymbol} {$availableRooms}室</div>
-                    <a href='{$btn_route}'>予約する</a>
+                    <a href='{$btn_route}'class='{$linkActive}'>予約する</a>
                 </td>
             ";
-
-            // $week[] = "<td class='{$todayClass}{$holidayClass}'>
-            //     {$day}<br>. .  a.   </td>";
-            
-            // $week[] = "<td class='{$todayClass}{$holidayClass}'>{$day}</td>";
 
             // 土曜日の場合、行を閉じて新しい週を開始
             if ($currentDate->dayOfWeek === Carbon::SATURDAY) {
@@ -231,7 +164,7 @@ class CalendarController extends Controller
      */
     private function isHoliday(Carbon $date)
     {
-        // 簡易例：固定祝日のみ　　　
+        // 簡易例：固定の場合
         // $holidays = [
         //     '01-01', // 元日
         //     '02-11', // 建国記念日
