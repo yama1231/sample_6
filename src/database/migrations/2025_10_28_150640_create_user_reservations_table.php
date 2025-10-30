@@ -20,12 +20,14 @@ return new class extends Migration
             $table->string('lastname');
             $table->string('email');
             $table->string('address');
-            $table->integer('tel');
+            $table->string('tel', 13);
+            $table->date('reservation_date');
             $table->string('plan_name');//プラン名nameを登録＊
             $table->string('room_type_name');//部屋種別名nameを登録＊
             $table->integer('price');//紐づけずにそのまま登録＊
             $table->string('user_message')->nullable();
             $table->string('admin_memo')->nullable();
+            $table->integer('reservation_slot_id');
             $table->integer('delete_flag')->default(0);
             $table->timestamps();
         });

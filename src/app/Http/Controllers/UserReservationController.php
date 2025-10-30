@@ -29,23 +29,28 @@ class UserReservationController extends Controller
         //     'title' => 'required|max:255',
         // ]);
         
-        // $reservationSlotId = $request->query('reservation_slot_id');
+        $reservationSlotId = $request->query('reservation_slot_id');
         $planId = $request->query('plan_id');
         $roomTypeId = $request->query('room_type_id');
         
-        // Log::info($reservationSlotId);
         
+        
+        $reservationSlot = ReservationSlot::find($reservationSlotId);
+        $reservationDate = $reservationSlot->reservation_date->format('Y-m-d');
         $plan = AccommodationPlan::findOrFail($planId);
         $roomType = RoomType::findOrFail($roomTypeId);
         $price = Price::where('accommodation_plan_id', $planId)
             ->where('room_type_id', $roomTypeId)
             ->first();
-        
+
+
+        // dd($reservationDate);
         // セッションに保存
         session([
             // 'plan_id' => $request->query('plan_id'),
             // 'room_type_id' => $request->query('room_type_id'),
-            'reservation_slot_id' => $request->query('reservation_slot_id'),
+            'reservation_slot_id' => $reservationSlotId,
+            'reservation_date' => $reservationDate,
             'plan_name' => $plan->title,
             'room_type_name' => $roomType->name,
             'price' => $price->price,
@@ -93,16 +98,19 @@ class UserReservationController extends Controller
 
     public function complete()
     {
+
         UserReservation::create([
             'lastname' => session('lastname'),
             'firstname' => session('firstname'),
             'email' => session('email'),
             'address' => session('address'),
             'tel' => session('tel'),
+            'reservation_date' => session('reservation_date'),
             'plan_name' => session('plan_name'),
             'room_type_name' => session('room_type_name'),
             'price' => session('price'),
             'user_message' => session('message'),
+            'reservation_slot_id' => session('reservation_slot_id'),
         ]);
 
         $slotId = session('reservation_slot_id');

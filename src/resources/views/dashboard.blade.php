@@ -111,13 +111,16 @@
 
         <p>※お問合せ詳細のデザインがおかしいので、要修正＋日付フォーマット変換※</p>
         <a href="{{ route('profile.edit') }}" class="btn btn-primary">
-            Profile
+            プロフィール
         </a>
         <a href="{{ route('reservation_slots.index') }}" class="btn btn-primary">
             予約枠
         </a>
         <a href="{{ route('accommodation-plans.index') }}" class="btn btn-primary">
             宿泊プラン
+        </a>
+        <a href="{{ route('reservation.index') }}" class="btn btn-primary">
+            予約一覧
         </a>
     {{-- </form> --}}
     <br>

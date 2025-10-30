@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccessController;
 use App\Http\Controllers\AccommodationPlanController;
+use App\Http\Controllers\AdminReservationController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
@@ -57,11 +58,6 @@ Route::post('/reservation/complete', [UserReservationController::class, 'complet
 
 
 
-
-
-
-
-
 // 管理者側
 Route::prefix('admin')->group(function () {
     Route::get('/', function () {
@@ -90,6 +86,14 @@ Route::prefix('admin')->group(function () {
         Route::resource('/reservation_slots', ReservationSlotController::class);
         // 宿泊プラン
         Route::resource('accommodation-plans', AccommodationPlanController::class);
+        // 予約
+        Route::get('/reservation/index', [AdminReservationController::class, 'index'])->name('reservation.index');
+        Route::get('/reservation/confirm/show/{reservation}', [AdminReservationController::class, 'show'])->name('reservation.show');
+        Route::get('/reservation/confirm/memo/{reservation}', [AdminReservationController::class, 'memo'])->name('reservation.memo');
+        Route::post('/reservation/memo_save', [AdminReservationController::class, 'memo_save'])->name('reservation.memo_save');
+        Route::post('/reservation/cancel', [AdminReservationController::class, 'cancel'])->name('reservation.cancel');
+        Route::get('/reservation/search', [AdminReservationController::class, 'search'])->name('reservation.search');
+
     });
 });
 require __DIR__.'/auth.php';
