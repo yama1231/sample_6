@@ -56,12 +56,10 @@ Route::get('/reservation/confirm/user_detail', [UserReservationController::class
 Route::post('/reservation/complete', [UserReservationController::class, 'complete'])->name('user.reservation.complete');
 
 
-
-
 // 管理者側
 Route::prefix('admin')->group(function () {
     Route::get('/', function () {
-        return view('welcome');
+        return redirect()->route('login');
     });
     //管理者側　ログイン後画面（後で最初にログイン画面が来るように修正する）
     // Route::get('/dashboard', function () {

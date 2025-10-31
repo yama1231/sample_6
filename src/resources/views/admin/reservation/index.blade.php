@@ -1,11 +1,11 @@
 <x-app-layout>
 <x-slot name="header">
-    <div class="d-flex justify-content-between align-items-center">
-        <h2 class="h4 mb-0">予約一覧</h2>
+    <div class="d-flex justify-content-between align-items-center py-3">
+        <h2>予約一覧</h2>
     </div>
 </x-slot>
 
-<div class="container py-4">
+<div class="container-fluid px-3 py-4">
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
@@ -82,8 +82,10 @@
         </div>
     </div>
     <br>
-    <a href="{{ route('dashboard') }}">
-        ダッシュボードへ戻る
-    </a>
+    <div class="m-4">
+        <a href="{{ route('dashboard') }}">
+            ダッシュボードへ戻る
+        </a>
+    </div>
 </div>
 </x-app-layout>

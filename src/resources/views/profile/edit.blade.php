@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="d-flex justify-content-start align-items-center py-3">
             {{ __('Profile') }}
         </h2>
     </x-slot>
@@ -26,7 +26,9 @@
             </div>
         </div>
     </div>
-    <a href="{{ route('dashboard') }}" class="hidden space-x-8 sm:-my-px sm:flex sm:items-center font-medium text-xl text-gray-900 hover:text-gray-700 transition">
-        ダッシュボードへ戻る
-    </a>
+    <div class="m-4">
+        <a href="{{ route('dashboard') }}" class="">
+            ダッシュボードへ戻る
+        </a>
+    </div>
 </x-app-layout>

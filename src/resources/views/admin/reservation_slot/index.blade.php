@@ -1,6 +1,6 @@
 <x-app-layout>
 <x-slot name="header">
-    <div class="d-flex justify-content-between align-items-center">
+    <div class="d-flex justify-content-between align-items-center py-3">
         <h2 class="h4 mb-0">予約枠一覧</h2>
         <a href="{{ route('reservation_slots.create') }}" class="btn btn-primary">
             新規作成
@@ -62,7 +62,7 @@
                 </table>
             </div>
 
-            <div class="mt-3">
+            <div class="mt-3 align-items-center mb-2">
                 {{ $reservationSlots->links() }}
             </div>
         </div>

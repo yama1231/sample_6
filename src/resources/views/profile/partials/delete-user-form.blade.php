@@ -46,7 +46,7 @@
                     {{ __('Cancel') }}
                 </x-secondary-button>
 
-                <x-danger-button class="ml-3">
+                <x-danger-button class="mb-1">
                     {{ __('Delete Account') }}
                 </x-danger-button>
             </div>

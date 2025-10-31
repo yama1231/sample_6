@@ -1,28 +1,12 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-
-        <title>{{ config('app.name', 'Laravel') }}</title>
-
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
-        <!-- Scripts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-        <!-- Scripts -->
-        {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
-        <!-- Bootstrap CSS -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
-
-            <table class="table table-striped">
+<x-app-layout>
+    <x-slot name="header">
+        <div class="d-flex justify-content-between align-items-center py-3">
+            <h2>お問合せ詳細</h2>
+        </div>
+    </x-slot>
+    <div class="container-fluid px-3 py-4">
+    <div class="min-h-screen bg-gray-100">
+        <table class="table table-striped">
             <thead>
                 <tr>
                     <th>No.</th>
@@ -32,7 +16,6 @@
                     <th>内容</th>
                     <th>お問合せ日</th>
                     <th>対応状況</th>
-                    <th>ステータス変更</th>
                 </tr>
             </thead>
             <tbody>
@@ -51,11 +34,7 @@
                     @elseif ($contact->status == 2)
                         <td>対応済み</td>
                     @endif
-                    <td>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                            変更
-                        </button>
-                    </td> 
+                    
                     {{-- <td>
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
                             詳細
@@ -98,16 +77,18 @@
                 </div>
             </tbody>
         </table>
+        <div class="d-flex justify-content-end align-items-center py-3">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                ステータス変更
+            </button>
+        </div>
         <p>たて箇条書き、ステータス記載、ボタンを下に設置、ステータス変更後に詳細画面に再遷移</p>
         <p>ステータス変更後にセッションメッセージを表示</p>
-        <a href="{{ route('dashboard') }}" class="hidden space-x-8 sm:-my-px sm:flex sm:items-center font-medium text-xl text-gray-900 hover:text-gray-700 transition">
-            ダッシュボードへ戻る
-        </a>
+        <div class="m-4">
+            <a href="{{ route('dashboard') }}" class="hidden space-x-8 sm:-my-px sm:flex sm:items-center font-medium text-xl text-gray-900 hover:text-gray-700 transition">
+                ダッシュボードへ戻る
+            </a>
         </div>
-        <!-- Bootstrap Bundle with Popper -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    </body>
-</html>
-
-        
+    </div>
+    </div>
+</x-app-layout>

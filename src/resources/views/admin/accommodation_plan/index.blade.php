@@ -1,6 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="h4 font-weight-bold">宿泊プラン一覧</h2>
+        <h2 class="d-flex justify-content-start align-items-center py-3">
+            宿泊プラン一覧
+        </h2>
     </x-slot>
     <div class="container py-4">
         @if (session('success'))

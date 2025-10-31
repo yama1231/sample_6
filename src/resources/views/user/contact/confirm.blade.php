@@ -1,6 +1,7 @@
 @extends('layouts.user-header')
 @section('content')
     {{-- <body class="font-sans antialiased"> --}}
+    <div class="container py-4">
     <div class="min-h-screen bg-gray-100">
         <form action="{{ route('user.contact.complete')}}" method="post">
             @csrf
@@ -26,8 +27,9 @@
                 <p>{{ session('detail') }}</p>
             </div>
             <br>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">送信</button>
         </form>
+    </div>
     </div>
 @endsection
     {{-- </body> --}}

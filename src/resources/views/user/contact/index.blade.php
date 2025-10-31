@@ -1,7 +1,10 @@
 @extends('layouts.user-header')
 @section('content')
     {{-- <body class="font-sans antialiased"> --}}
-    <div class="min-h-screen bg-gray-100">
+    <div class="min-h-screen bg-gray-100 m-3">
+        <a class="text-decoration-none text-dark" href="{{ route('user.top') }}">
+            <h4 class="m-2">お問い合わせ</h4>
+        </a>
         <form action="{{ route('user.contact.confirm')}}" method="post">
             @csrf
             <br>
@@ -19,11 +22,11 @@
                 <input type="text" name="title" class="form-control" id="title">
             </div>
             <div class="mb-3">
-                <label for="detail" class="form-label">お問合せ内容</label>
+                <label for="detail" class="form-label">お問い合わせ内容</label>
                 <textarea class="form-control" name="detail" id="detail" rows="3"></textarea>
             </div>
 
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">次へ</button>
         </form>
 
     </div>
