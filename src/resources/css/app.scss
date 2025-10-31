@@ -4,3 +4,18 @@
 
 // Bootstrap
 @import 'bootstrap/scss/bootstrap';
+
+body {
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    font-weight: 400;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    font-weight: 700;
+}
+
+.btn, button {
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    font-weight: 500;
+}
