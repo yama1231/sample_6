@@ -9,12 +9,13 @@ use App\Models\Price;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 
 class AccommodationPlanController extends Controller
 {
 
 
-    public function index()
+    public function index(): View
     {  
         $plans = AccommodationPlan::with('images')->paginate('10');
         return view('admin.accommodation_plan.index', compact('plans'));
