@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ContactRequest;
 use App\Mail\ContactMail;
 use Illuminate\Support\Facades\Mail; 
 use App\Models\Contact;
@@ -35,22 +36,17 @@ class ContactController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function confirm(Request $request)
+    public function confirm(ContactRequest $request)
     {
-        // バリデーション
-        $validated = $request->validate([
-            'name' => 'required|max:255',
-            'email' => 'required',
-            'title' => 'required|max:255',
-            'detail' => 'required'
-        ]);
+        $validated = $request->validated();
+
         
         // セッションに保存
         session([
-            'name' => $request->name,
-            'email' => $request->email,
-            'title' => $request->title,
-            'detail' => $request->detail,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'title' => $validated['title'],
+            'detail' => $validated['detail'],
         ]);
 
         return view('user.contact.confirm');
@@ -67,7 +63,7 @@ class ContactController extends Controller
         ]);
 
         $session_data = session()->only(['name','email','title','detail']);
-        // ユーザへ送信　
+        // ユーザへ送信
         Mail::to($session_data['email'])->send(new ContactMail('user.contact.mail', 'お問い合わせが完了しました', $session_data));
         // 管理者へ送信
         Mail::to('admin@example.com')->send(new ContactMail('user.contact.admin_mail', 'お問い合わせを受信しました', $session_data));
