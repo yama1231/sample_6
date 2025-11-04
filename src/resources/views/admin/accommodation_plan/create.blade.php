@@ -44,10 +44,11 @@
                                     value="{{ old('price'.$roomType->id) }}" 
                                     required>
                             <input type="hidden" name="roomtype[{{$roomType->id}}]" value="{{$roomType->id}}">
+                            @error('price'.$roomType->id)
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         @endforeach
-                        @error('price'.$roomType->id)
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        
                     </div>
 
                     <div class="mb-3">
@@ -63,6 +64,7 @@
                         @enderror
                         <small class="text-muted">JPEG, PNG, GIF形式（最大2MB）</small>
                     </div>
+                    
 
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary">作成</button>
@@ -73,3 +75,10 @@
         </div>
     </div>
 </x-app-layout>
+<input type="file" id="test" multiple accept="image/*">
+    <script>
+        document.getElementById('test').addEventListener('change', function() {
+            console.log('File selected:', this.files);
+            alert('ファイルが選択されました: ' + this.files.length + '個');
+        });
+    </script>

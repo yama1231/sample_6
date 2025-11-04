@@ -1,10 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="d-flex justify-content-start align-items-center py-3">
-            宿泊プラン一覧
-        </h2>
+        <div class="d-flex justify-content-between align-items-center py-3">
+            <h2 class="h4 mb-0">
+                宿泊プラン一覧
+            </h2>
+            <a href="{{ route('accommodation-plans.create') }}" class="btn btn-primary">
+                新規作成
+            </a>
+        </div>
     </x-slot>
-    <div class="container py-4">
+    <div class="container-fluid px-3 py-4">
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ session('success') }}
@@ -12,11 +17,7 @@
             </div>
         @endif
 
-        <div class="d-flex justify-content-end mb-3">
-            <a href="{{ route('accommodation-plans.create') }}" class="btn btn-primary">
-                新規作成
-            </a>
-        </div>
+        
 
         <div class="row">
             @forelse ($plans as $plan)

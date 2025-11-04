@@ -9,7 +9,7 @@
             @csrf
             <br>
             <div class="mb-3">
-                <label for="name" class="form-label @error('name') is-invalid @enderror">お名前</label>
+                <label for="name" class="form-label @error('name') is-invalid @enderror">お名前<span class="text-danger">*</span></label>
                 <input type="text" name="name" class="form-control" id="email" value="{{ old('name') }}">
                 @error('name')
                     <div class="invalid-feedback">
@@ -18,7 +18,7 @@
                 @enderror
             </div>
             <div class="mb-3">
-                <label for="email" class="form-label @error('email') is-invalid @enderror">メールアドレス</label>
+                <label for="email" class="form-label @error('email') is-invalid @enderror">メールアドレス<span class="text-danger">*</span></label>
                 <input type="text" name="email" class="form-control" id="email" value="{{ old('email') }}">
                 @error('email')
                     <div class="invalid-feedback">
@@ -27,7 +27,7 @@
                 @enderror
             </div>
             <div class="mb-3">
-                <label for="title" class="form-label @error('title') is-invalid @enderror">件名</label>
+                <label for="title" class="form-label @error('title') is-invalid @enderror">件名<span class="text-danger">*</span></label>
                 <input type="text" name="title" class="form-control" id="title" value="{{ old('title') }}">
                 @error('title')
                     <div class="invalid-feedback">
@@ -36,7 +36,7 @@
                 @enderror
             </div>
             <div class="mb-3">
-                <label for="detail" class="form-label @error('detail') is-invalid @enderror">お問い合わせ内容</label>
+                <label for="detail" class="form-label @error('detail') is-invalid @enderror">お問い合わせ内容<span class="text-danger">*</span></label>
                 <textarea class="form-control" name="detail" id="detail" rows="3">{{ old('detail') }}</textarea>
                 @error('detail')
                     <div class="invalid-feedback">

@@ -1,8 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="d-flex justify-content-start align-items-center py-3">
-            {{ __('Profile') }}
-        </h2>
+        <div class="d-flex justify-content-between align-items-center py-3">
+        <h2>{{ __('Profile') }}</h2>
+        <div class="m-4">
+            <a href="{{ route('dashboard') }}" class="">
+                ダッシュボードへ戻る
+            </a>
+        </div>
     </x-slot>
 
     <div class="py-12">
@@ -25,10 +29,5 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="m-4">
-        <a href="{{ route('dashboard') }}" class="">
-            ダッシュボードへ戻る
-        </a>
     </div>
 </x-app-layout>

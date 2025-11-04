@@ -62,8 +62,8 @@
                 </table>
             </div>
 
-            <div class="mt-3 align-items-center mb-2">
-                {{ $reservationSlots->links() }}
+            <div class="mb-4 my-4">
+                {!! $reservationSlots->links('pagination::bootstrap-5') !!}
             </div>
         </div>
     </div>
