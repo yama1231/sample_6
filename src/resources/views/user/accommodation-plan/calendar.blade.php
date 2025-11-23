@@ -100,15 +100,15 @@
             </div>
 
             <!-- Calendar Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4 px-3">
-                <a href="#" class="btn btn-outline-secondary rounded-circle p-2" id="prevMonth" data-ym="{{ $prev }}" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
-                    <i class="bi bi-chevron-left">&lt;</i>
-                </a>
-                <h2 class="h3 fw-bold mb-0 text-dark" id="calendarTitle">{{ $html_title }}</h2>
-                <a href="#" class="btn btn-outline-secondary rounded-circle p-2" id="nextMonth" data-ym="{{ $next }}" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
-                    <i class="bi bi-chevron-right">&gt;</i>
-                </a>
-            </div>
+        <div class="d-flex justify-content-between align-items-center mb-4 px-3">
+            <a href="#" class="btn btn-outline-secondary rounded-circle p-2" id="prevMonth" data-ym="{{ $prev }}" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+            <h2 class="h3 fw-bold mb-0 text-dark" id="calendarTitle">{{ $html_title }}</h2>
+            <a href="#" class="btn btn-outline-secondary rounded-circle p-2" id="nextMonth" data-ym="{{ $next }}" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                <i class="bi bi-chevron-right"></i>
+            </a>
+        </div>
 
             <!-- Calendar Table -->
             <div class="card shadow border-0">
