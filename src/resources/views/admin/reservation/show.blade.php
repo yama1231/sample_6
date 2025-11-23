@@ -7,27 +7,7 @@
         <div class="card">
             <div class="card-body">
                 <!-- 画像カルーセル -->
-                {{-- @if ($reservation->images->count() > 0)
-                    <div id="planImagesCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            @foreach ($reservation->images as $index => $image)
-                                <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                                    <img src="{{ asset('storage/' . $image->image_path) }}" 
-                                        class="d-block w-100" 
-                                        style="height: 400px; object-fit: cover;">
-                                </div>
-                            @endforeach
-                        </div>
-                        @if ($reservation->images->count() > 1)
-                            <button class="carousel-control-prev" type="button" data-bs-target="#planImagesCarousel" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon"></span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#planImagesCarousel" data-bs-slide="next">
-                                <span class="carousel-control-next-icon"></span>
-                            </button>
-                        @endif
-                    </div>
-                @endif --}}
+
 
                 <h3 class="mb-3">{{ $reservation->title }}</h3>
                 
@@ -49,8 +29,12 @@
                     <form action="{{ route('reservation.cancel') }}" method="POST">
                         @csrf
                         <input type="hidden" name="reservation_id" value="{{ $reservation->id }}">
-                    {{-- <a href="{{ route('reservation.cancel') }}" class="btn btn btn-danger">予約キャンセル</a> --}}
-                        <button type="submit" class="btn btn btn-danger">予約キャンセル</button>
+
+                        @if($reservation->delete_flag == 1)
+                            <button type="button" class="btn btn-secondary" disabled>キャンセル済み</button>
+                        @else
+                            <button type="submit" class="btn btn-danger">予約キャンセル</button>
+                        @endif
                     </form>
                     <a href="{{ route('reservation.index') }}" class="btn btn-secondary">一覧へ戻る</a>
                 </div>
