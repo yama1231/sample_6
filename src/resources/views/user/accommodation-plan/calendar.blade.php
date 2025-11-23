@@ -5,78 +5,145 @@
 @section('styles')
     {{-- Google Fonts --}}
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
-    {{-- カレンダー専用CSS --}}
-    <link rel="stylesheet" href="{{ asset('css/calendar.css') }}">
+    <style>
+        .calendar-cell {
+            height: 100px;
+            vertical-align: top;
+            position: relative;
+        }
+        .date-number {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        .availability-status {
+            font-size: 0.9rem;
+        }
+        .today {
+            background-color: #e8f4ff; /* Light blue for today */
+        }
+        .holiday {
+            background-color: #fff0f0; /* Light red for holidays */
+            color: #dc3545;
+        }
+        .calendar-nav-btn {
+            font-size: 1.2rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+        .calendar-nav-btn:hover {
+            background-color: #f0f0f0;
+            text-decoration: none;
+        }
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(2px);
+        }
+    </style>
 @endsection
 
 @section('content')
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
-<div class="container calendar-wrapper">
-        <div>
-            <br>
-            <p>選択中のプラン：{{$plan->title}}</p>
-            <p id="roomTypeName">部屋タイプ：{{$room_type_name}}</p>
-            <p id="price">料金：{{$price->price}}円</p>
-        </div>
-    <div class="calendar-card">
-        <div class="room-type-selector mb-4">
-            <h5>部屋タイプを選択</h5>
-            <div class="btn-group" role="group" aria-label="部屋タイプ選択">
-                @foreach($roomTypes as $roomType)
-                    <input 
-                        type="radio"
-                        class="btn-check"
-                        name="room_type"
-                        id="roomType{{ $roomType->id }}"
-                        value="{{ $roomType->id }}"
-                        autocomplete="off" 
-                        {{ $roomType->id == $selectedRoomTypeId ? 'checked' : '' }}
-                    >
-                    <label class="btn btn-outline-primary" for="roomType{{ $roomType->id }}">
-                        {{ $roomType->name}}
-                    </label>
-                @endforeach
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            
+            <!-- Plan Info Card -->
+            <div class="card shadow-sm mb-4 border-0 bg-light">
+                <div class="card-body">
+                    <h4 class="card-title mb-3 fw-bold text-primary">{{$plan->title}}</h4>
+                    <div class="d-flex flex-wrap gap-4 text-secondary">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-house-door me-2"></i>
+                            <span id="roomTypeName" class="fw-medium">部屋タイプ：{{$room_type_name}}</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-currency-yen me-2"></i>
+                            <span id="price" class="fw-medium">料金：{{ number_format($price->price) }}円〜</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Room Type Selector -->
+            <div class="mb-4 text-center">
+                <h5 class="mb-3 fw-bold text-secondary">部屋タイプを選択</h5>
+                <div class="btn-group" role="group" aria-label="部屋タイプ選択">
+                    @foreach($roomTypes as $roomType)
+                        <input 
+                            type="radio"
+                            class="btn-check"
+                            name="room_type"
+                            id="roomType{{ $roomType->id }}"
+                            value="{{ $roomType->id }}"
+                            autocomplete="off" 
+                            {{ $roomType->id == $selectedRoomTypeId ? 'checked' : '' }}
+                        >
+                        <label class="btn btn-outline-primary px-4 py-2" for="roomType{{ $roomType->id }}">
+                            {{ $roomType->name}}
+                        </label>
+                    @endforeach
+                </div>
+            </div>
+
+            <!-- Calendar Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4 px-3">
+                <a href="#" class="btn btn-outline-secondary rounded-circle p-2" id="prevMonth" data-ym="{{ $prev }}" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                    <i class="bi bi-chevron-left">&lt;</i>
+                </a>
+                <h2 class="h3 fw-bold mb-0 text-dark" id="calendarTitle">{{ $html_title }}</h2>
+                <a href="#" class="btn btn-outline-secondary rounded-circle p-2" id="nextMonth" data-ym="{{ $next }}" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                    <i class="bi bi-chevron-right">&gt;</i>
+                </a>
+            </div>
+
+            <!-- Calendar Table -->
+            <div class="card shadow border-0">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered mb-0 text-center align-middle">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="text-danger py-3">日</th>
+                                    <th class="py-3">月</th>
+                                    <th class="py-3">火</th>
+                                    <th class="py-3">水</th>
+                                    <th class="py-3">木</th>
+                                    <th class="py-3">金</th>
+                                    <th class="text-primary py-3">土</th>
+                                </tr>
+                            </thead>
+                            <tbody id="calendarBody">
+                                {!! implode('', $weeks) !!}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
+    </div>
 
-        <div class="calendar-header">
-            <div class="calendar-nav">
-                {{-- <a href="?ym={{ $prev }}" class="nav-btn">&lt;</a>
-                <h2 class="calendar-title">{{ $html_title }}</h2>
-                <a href="?ym={{ $next }}" class="nav-btn">&gt;</a> --}}
-                <a href="#" class="nav-btn" id="prevMonth" data-ym="{{ $prev }}">&lt;</a>
-                <h2 class="calendar-title" id="calendarTitle">{{ $html_title }}</h2>
-                <a href="#" class="nav-btn" id="nextMonth" data-ym="{{ $next }}">&gt;</a>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" style="display: none;">
+        <div class="text-center">
+            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">Loading...</span>
             </div>
+            <p class="mt-2 text-secondary fw-bold">読み込み中...</p>
         </div>
-
-        <div class="calendar-body">
-            <div class="table-responsive">
-                <table class="table table-bordered calendar-table">
-                    <thead>
-                        <tr>
-                            <th>日</th>
-                            <th>月</th>
-                            <th>火</th>
-                            <th>水</th>
-                            <th>木</th>
-                            <th>金</th>
-                            <th>土</th>
-                        </tr>
-                    </thead>
-                    <tbody id="calendarBody">
-                        {!! implode('', $weeks) !!}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="loadingOverlay" style="display: none;">
-            <div class="spinner-border" role="status">
-                <span class="visually-hidden">loading...</span>
-            </div>
-        </div>
-
     </div>
 </div>
 
@@ -88,11 +155,8 @@
         const prevMonthBtn = document.getElementById('prevMonth');
         const nextMonthBtn = document.getElementById('nextMonth');
         const calendarTitle = document.getElementById('calendarTitle');
-
-
-        // test
-        const roomTypeName = document.getElementById('roomTypeName')
-        const price = document.getElementById('price')
+        const roomTypeName = document.getElementById('roomTypeName');
+        const price = document.getElementById('price');
 
         // 部屋タイプ変更時の処理
         roomTypeInputs.forEach(input => {
@@ -105,7 +169,7 @@
 
         // 前月ボタン
         prevMonthBtn.addEventListener('click', function(e) {
-            e.preventDefault();//上部スクロール防止
+            e.preventDefault();
             const ym = this.dataset.ym;
             const roomTypeId = getSelectedRoomType();
             loadCalendar(ym, roomTypeId);
@@ -113,17 +177,14 @@
 
         // 次月ボタン
         nextMonthBtn.addEventListener('click', function(e) {
-            e.preventDefault();//上部スクロール防止
+            e.preventDefault();
             const ym = this.dataset.ym;
             const roomTypeId = getSelectedRoomType();
             loadCalendar(ym, roomTypeId);
         });
 
-        // plan_idは元々持ってるから別途送らなくてよい
-        // カレンダーデータ取得＋calendarBody.innerHTMLで更新
         function loadCalendar(ym, roomTypeId) {
             showLoading();
-            // ここでもPHPの変数は使える
             const planId = {{$plan->id}};
             
             fetch(`{{ route('user.calendar.data') }}?ym=${ym}&room_type_id=${roomTypeId}&plan_id=${planId}`)
@@ -131,9 +192,10 @@
             .then(data => {
                 if (data.success) {
                     calendarBody.innerHTML = data.weeks.join('');
-                    const room_type_name = data.room_type_name;
-                    roomTypeName.textContent =`部屋タイプ：${room_type_name}`;
-                    price.textContent = `料金：${data.price}円`;
+                    roomTypeName.textContent =`部屋タイプ：${data.room_type_name}`;
+                    // Format price with comma
+                    const formattedPrice = new Intl.NumberFormat('ja-JP').format(data.price);
+                    price.textContent = `料金：${formattedPrice}円〜`;
                     updateNavigation(ym);
                 }
             })
@@ -146,15 +208,12 @@
             });
         }
 
-        // ナビゲーション更新
         function updateNavigation(ym) {
             const [year, month] = ym.split('-');
             const date = new Date(year, month - 1, 1);
             
-            // タイトル更新
-            calendarTitle.textContent = `${year}年 ${month}月`;
+            calendarTitle.textContent = `${year}年 ${parseInt(month)}月`;
             
-            // 前月・次月の年月計算
             const prevDate = new Date(date);
             prevDate.setMonth(prevDate.getMonth() - 1);
             const prevYm = `${prevDate.getFullYear()}-${String(prevDate.getMonth() + 1).padStart(2, '0')}`;
@@ -167,12 +226,10 @@
             nextMonthBtn.dataset.ym = nextYm;
         }
 
-        // 選択中の部屋タイプID取得
         function getSelectedRoomType() {
             return document.querySelector('input[name="room_type"]:checked').value;
         }
         
-        // タイトルから現在の年月を取得
         function getCurrentYmFromTitle() {
             const title = calendarTitle.textContent;
             const match = title.match(/(\d{4})年\s*(\d{1,2})月/);
@@ -184,55 +241,13 @@
             return '{{ Carbon\Carbon::now()->format("Y-m") }}';
         }
 
-        // ローディング表示
         function showLoading() {
             loadingOverlay.style.display = 'flex';
         }
         
-        // ローディング非表示
         function hideLoading() {
             loadingOverlay.style.display = 'none';
         }
     });
 </script>
-
-<style>
-    
-.room-type-selector {
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 8px;
-}
-
-.calendar-cell {
-    position: relative;
-    height: 80px;
-    vertical-align: top;
-    padding: 8px;
-}
-
-.date-number {
-    font-weight: bold;
-    font-size: 16px;
-}
-
-.availability-status {
-    margin-top: 8px;
-    font-size: 14px;
-    color: #666;
-}
-
-#loadingOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-}
-</style>
 @endsection
