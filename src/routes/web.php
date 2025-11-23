@@ -30,10 +30,11 @@ use App\Http\Controllers\UserReservationController;
 // ホーム画面
 Route::get('/', function () {
     return view('user.top');
-});
-Route::get('/top', function () {
-    return redirect('/');
 })->name('user.top');
+
+// Route::get('/top', function () {
+//     return redirect('/');
+// })->name('user.top');
 // アクセス
 Route::get('/access', [AccessController::class, 'access'])->name('user.access');
 // お問い合わせ

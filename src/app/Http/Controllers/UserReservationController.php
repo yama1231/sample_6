@@ -124,7 +124,7 @@ class UserReservationController extends Controller
         Mail::to('admin@example.com')->send(new ContactMail('user.reservation.admin_email', '予約を受け付けました', $session_data));
         
         return redirect()->route('user.top')
-            ->with('success','予約枠を作成しました');//モーダルを出す
+            ->with('success','予約が完了しました。詳細はメールでご確認ください');
     }
 
 }

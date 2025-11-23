@@ -40,8 +40,14 @@
     </form>  --}}
 
 @extends('layouts.user-navigation')
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
 @section('content')
-    <p>TOPペーじ</p>
+        <p>TOPペーじ</p>
 @endsection
 
 
